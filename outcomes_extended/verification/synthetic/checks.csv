@@ -1,0 +1,63 @@
+issue,check,metric,value,verdict,note
+3,IBM 'gatv2_model.py' attention layer,layer class used,GATConv,CONFIRMED,imported names in module: ['GATConv']
+3,Sparkov 'gatv2_model.py' attention layer,layer class used,GATv2Conv,INFO,
+3,Hidden size / heads,"sparkov (hidden, heads)","(64, 4)",INFO,"Conference paper text states 32 hidden, 2 heads for both datasets."
+3,Hidden size / heads,"ibm (hidden, heads)","(32, 2)",INFO,
+4,ibm train_loop early stopping,break only executes when verbose=True,True,CONFIRMED (error),
+4,sparkov train_loop early stopping,break only executes when verbose=True,False,OK,
+4,dynamic early-stop test (ibm),"epochs trained, verbose=True",65,INFO,patience = 12 checks x 5 epochs = 60 epochs expected if early stopping works
+4,dynamic early-stop test (ibm),"epochs trained, verbose=False",200,INFO,patience = 12 checks x 5 epochs = 60 epochs expected if early stopping works
+4,dynamic early-stop test (sparkov),"epochs trained, verbose=True",65,INFO,
+4,dynamic early-stop test (sparkov),"epochs trained, verbose=False",65,INFO,
+1,global sort key vs true time,Spearman rho,0.0435,CONFIRMED (not chronological),
+1,merchant-chain edges,% linking chronological neighbours (rank gap <= 2),70.3381,INFO,100% expected if chains were time-ordered (groups below max_group_size)
+1,merchant-chain edges,% linking two transactions of the same card,11.8321,INFO,
+1,global 'time' edges,% that join two different cards,29.0829,INFO,
+1,global 'time' edges,% that duplicate within-card chain edges,70.9171,INFO,
+1,global 'time' edges (cross-card),median |time gap| in days,340.7167,INFO,
+2,sparkov intra_group test graph (original_protocol),isolated nodes / isolated fraud,1 / 0,INFO,
+2,sparkov multi_relation test graph (original_protocol),isolated nodes,0,CONFIRMED (zero isolates),
+2,sparkov hybrid test graph (original_protocol),isolated nodes,0,CONFIRMED (zero isolates),
+2,sparkov intra_group test graph (no_downsampling_SYNTHETIC),isolated nodes / isolated fraud,5652 / 20,INFO,
+2,sparkov multi_relation test graph (no_downsampling_SYNTHETIC),isolated nodes,0,CONFIRMED (zero isolates),
+2,sparkov hybrid test graph (no_downsampling_SYNTHETIC),isolated nodes,0,CONFIRMED (zero isolates),
+5b,single-feature ROC-AUC: trans_time_diff,all rows -> after downsampling,0.864 -> 0.716,CHANGED (down),'amt' is a row-local control feature: it should not change
+5b,single-feature ROC-AUC: amt_to_avg,all rows -> after downsampling,0.967 -> 0.674,CHANGED (down),'amt' is a row-local control feature: it should not change
+5b,single-feature ROC-AUC: amt,all rows -> after downsampling,0.978 -> 0.977,INFO,'amt' is a row-local control feature: it should not change
+5b,rows whose trans_time_diff is the fill value 0 (first retained row of a card),% of legit / % of fraud rows,24.2 / 1.5,INFO,
+5b,median trans_time_diff (minutes) after downsampling,class 0,70211.8984,INFO,
+5b,median trans_time_diff (minutes) after downsampling,class 1,245.0417,INFO,
+6,sparkov intra_group: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,sparkov intra_group: nodes receiving >=1 message from the future,% of non-isolated nodes,81.1688,INFO,
+6,sparkov multi_relation: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,sparkov multi_relation: nodes receiving >=1 message from the future,% of non-isolated nodes,88.0259,INFO,
+6,sparkov hybrid: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,sparkov hybrid: nodes receiving >=1 message from the future,% of non-isolated nodes,95.4693,INFO,
+9,sparkov similarity-edge features,mean share of squared norm from integer category codes,99.9842,CONFIRMED (codes dominate),
+9,sparkov kNN overlap (k=6),full vs category-codes-only,94.6602,INFO,
+9,sparkov kNN overlap (k=6),full vs numeric-only,5.9331,INFO,
+8,sparkov raw schema,matches,Sparkov (card purchases),INFO,
+8,sparkov receiver-account column present,columns,none,NO account-to-account chains possible,
+11,"sparkov intra_group test graph, two RNG states",edge Jaccard similarity,1.0,INFO (1.0 = identical graph for every fold model),
+2,ibm intra_group test graph (original_protocol),isolated nodes / isolated fraud,428 / 54,INFO,
+2,ibm multi_relation test graph (original_protocol),isolated nodes / isolated fraud,0 / 0,INFO,
+2,ibm hybrid test graph (original_protocol),isolated nodes / isolated fraud,0 / 0,INFO,
+7,users shared by dev and test,count,0,INFO (0 = proper group split),
+7,user_avg_amount distinct values,dev / test,200 / 1,CONFIRMED (constant on test),
+7,amount_over_user_avg vs Amount on test,Pearson r,1.0,CONFIRMED (redundant copy of Amount),
+7,user_avg_amount distinct values on validation fold 1,count,1,INFO,
+6,ibm intra_group: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,ibm intra_group: nodes receiving >=1 message from the future,% of non-isolated nodes,99.3197,INFO,
+6,ibm multi_relation: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,ibm multi_relation: nodes receiving >=1 message from the future,% of non-isolated nodes,99.8849,INFO,
+10,IBM 'Card' relation edges (test graph),% joining two different Users,88.2217,INFO,
+6,ibm hybrid: messages from later to earlier transactions,% of directed non-self edges,50.0,INFO,
+6,ibm hybrid: nodes receiving >=1 message from the future,% of non-isolated nodes,99.8849,INFO,
+9,ibm similarity-edge features,mean share of squared norm from integer category codes,94.883,CONFIRMED (codes dominate),
+9,ibm kNN overlap (k=6),full vs category-codes-only,12.8117,INFO,
+9,ibm kNN overlap (k=6),full vs numeric-only,14.3843,INFO,
+10,IBM intra_group edges (test graph),% joining two different Users,88.3319,INFO,Paper: 'No edges cross cardholder boundaries.'
+8,ibm raw schema,matches,IBM TabFormer (card purchases),INFO,
+8,ibm receiver-account column present,columns,none,NO account-to-account chains possible,
+10,IBM 'Card' column semantics,distinct Card values / max users sharing one Card value,3 / 250,CONFIRMED (Card is a per-user index),On synthetic data this holds by construction; run on the real file to confirm.
+11,"ibm intra_group test graph, two RNG states",edge Jaccard similarity,0.2477,INFO (1.0 = identical graph for every fold model),

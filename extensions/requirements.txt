@@ -1,0 +1,10 @@
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+networkx
+torch>=2.0.0
+torch-geometric>=2.3.0
+faiss-cpu>=1.7.4
+pyarrow
